@@ -1,4 +1,4 @@
-﻿local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/SiriusSoftwareLtd/Rayfield/main/source.lua"))()
+local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/SiriusSoftwareLtd/Rayfield/main/source.lua"))()
 
 local Window = Rayfield:CreateWindow({
 	Name = "Baldi",
@@ -30,12 +30,37 @@ local Window = Rayfield:CreateWindow({
 })
 
 local chr = game.Players.LocalPlayer.Character
+local antiFall
 local brightness
 local espBaldi
 local espPlayer
 local noclip
 local stamina
 local espBooks = false
+local complete
+local function whatComplete(v)
+	if v.Name == "CountingSession" then
+		task.wait(0.2)
+		game.Players.LocalPlayer.PlayerGui.CountingSession.Server.SetFinishState:FireServer({["Value"] = "Correct", ["User"] = game.Players.LocalPlayer})
+		task.wait(0.2)
+		game.Players.LocalPlayer.PlayerGui.CountingSession.Server.DeleteUi:FireServer({["Value"] = "True", ["User"] = game.Players.LocalPlayer})
+	elseif v.Name == "BalloonSession" then
+		task.wait(0.2)
+		game.Players.LocalPlayer.PlayerGui.BalloonSession.Server.SetFinishState:FireServer({["Value"] = "Correct", ["User"] = game.Players.LocalPlayer})
+		task.wait(0.2)
+		game.Players.LocalPlayer.PlayerGui.BalloonSession.Server.DeleteUi:FireServer({["Value"] = "True", ["User"] = game.Players.LocalPlayer})
+	elseif v.Name == "BMatchingSession" then
+		task.wait(0.2)
+		game.Players.LocalPlayer.PlayerGui.BMatchingSession.Server.SetFinishState:FireServer({["Value"] = "Correct", ["User"] = game.Players.LocalPlayer})
+		task.wait(0.2)
+		game.Players.LocalPlayer.PlayerGui.BMatchingSession.Server.DeleteUi:FireServer({["Value"] = "True", ["User"] = game.Players.LocalPlayer})
+	elseif v.Name == "MechanicSession" then
+		task.wait(0.2)
+		game.Players.LocalPlayer.PlayerGui.MechanicSession.Server.SetFinishState:FireServer({["Value"] = "Red", ["User"] = game.Players.LocalPlayer})
+		task.wait(0.2)
+		game.Players.LocalPlayer.PlayerGui.MechanicSession.Server.DeleteUi:FireServer({["Value"] = "True", ["User"] = game.Players.LocalPlayer})
+	end
+end
 
 local chekking = workspace.Game.Players.ChildAdded:Connect(function(v)
 	if v.Name == game.Players.LocalPlayer.Name then
@@ -49,7 +74,7 @@ local Tab = Window:CreateTab("Esp", 4483362458)
 local Toggle = Tab:CreateToggle({
 	Name = "Esp Enemy",
 	CurrentValue = false,
-	Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Flag = "Esp Enemy", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Value)
 		if Value then
 			for _, v in ipairs (workspace.Game.Players:GetChildren()) do
@@ -84,7 +109,7 @@ local Toggle = Tab:CreateToggle({
 local Toggle = Tab:CreateToggle({
 	Name = "Esp Players",
 	CurrentValue = false,
-	Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Flag = "Esp Players", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Value)
 		if Value then
 			for _, v in ipairs (workspace.Game.Players:GetChildren()) do
@@ -119,7 +144,7 @@ local Toggle = Tab:CreateToggle({
 local Toggle = Tab:CreateToggle({
 	Name = "Esp Books",
 	CurrentValue = false,
-	Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Flag = "Esp Books", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Value)
 		if Value then
 			espBooks = true
@@ -148,13 +173,14 @@ local Tab = Window:CreateTab("Misc", 4483362458)
 local Toggle = Tab:CreateToggle({
 	Name = "Noclip",
 	CurrentValue = false,
-	Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Flag = "Noclip", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Value)
 		if Value then
 			chr.HumanoidRootPart.CanCollide = false
 			if game.ReplicatedStorage:FindFirstChild("CrouchBlock") then
 				game.ReplicatedStorage.CrouchBlock:Destroy()
 			end
+			task.wait(0.2)
 			chr.CrouchBlock.Parent = game.ReplicatedStorage
 			
 			noclip = workspace.Game.Players.ChildAdded:Connect(function(v)
@@ -164,7 +190,10 @@ local Toggle = Tab:CreateToggle({
 					if game.ReplicatedStorage:FindFirstChild("CrouchBlock") then
 						game.ReplicatedStorage.CrouchBlock:Destroy()
 					end
-					chr.CrouchBlock.Parent = game.ReplicatedStorage
+					task.wait(0.2)
+					if chr:FindFirstChild("CrouchBlock") then
+						chr.CrouchBlock.Parent = game.ReplicatedStorage
+					end
 				end
 			end)
 		else
@@ -178,11 +207,11 @@ local Toggle = Tab:CreateToggle({
 local Toggle = Tab:CreateToggle({
 	Name = "Fullbright",
 	CurrentValue = false,
-	Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Flag = "Fullbright", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Value)
 		if Value then
 			brightness = game.RunService.RenderStepped:Connect(function()
-				game.Lighting.Ambient = Color3.fromRGB(128, 128, 128)
+				game.Lighting.Ambient = Color3.fromRGB(170, 170, 170)
 				game.Lighting.FogEnd = 99999
 				game.Lighting.GlobalShadows = false
 			end)
@@ -196,7 +225,7 @@ local Toggle = Tab:CreateToggle({
 local Toggle = Tab:CreateToggle({
 	Name = "Inf Stamina",
 	CurrentValue = false,
-	Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Flag = "Inf Stamina", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Value)
 		if Value then
 			stamina = game.RunService.Heartbeat:Connect(function()
@@ -207,6 +236,48 @@ local Toggle = Tab:CreateToggle({
 			end)
 		else
 			stamina:Disconnect()	
+		end
+	end,
+})
+
+local Toggle = Tab:CreateToggle({
+	Name = "Auto Complete",
+	CurrentValue = false,
+	Flag = "Auto Complete", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		if Value then
+			for _, v in ipairs (game.Players.LocalPlayer.PlayerGui:GetChildren()) do
+				whatComplete(v)
+			end
+			complete = game.Players.LocalPlayer.PlayerGui.ChildAdded:Connect(whatComplete)
+		else
+			complete:Disconnect()	
+		end
+	end,
+})
+
+local Toggle = Tab:CreateToggle({
+	Name = "Anti fall (if you using noclip)",
+	CurrentValue = false,
+	Flag = "Anti fall", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		if Value then
+			antiFall = workspace.Game.ChildAdded:Connect(function(v)
+				if v.Name == "Map" then
+					task.wait(1)
+					if workspace.Game.Map.Environment:FindFirstChild("Floor") then
+						workspace.Game.Map.AntiVoidKillBarrier.CFrame = workspace.Game.Map.Environment.Floor.CFrame
+					elseif workspace.Game.Map.Environment:FindFirstChild("Floor1") then
+						workspace.Game.Map.AntiVoidKillBarrier.CFrame = workspace.Game.Map.Environment.Floor1.CFrame
+					end
+					workspace.Game.Map.AntiVoidKillBarrier.CanTouch = false
+					workspace.Game.Map.AntiVoidKillBarrier.Size = Vector3.new(2048, 2, 2048)
+				end
+			end)
+			workspace.Game.Lobby.Environment.AntiVoidKillBarrier.CFrame = workspace.Game.Lobby.Environment.AntiVoidKillBarrier.CFrame + Vector3.new(0, 23, 0)
+		else
+			antiFall:Disconnect()
+			workspace.Game.Lobby.Environment.AntiVoidKillBarrier.CFrame = workspace.Game.Lobby.Environment.AntiVoidKillBarrier.CFrame - Vector3.new(0, 23, 0)	
 		end
 	end,
 })

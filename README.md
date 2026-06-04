@@ -1,1 +1,2 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Finalelele/baldi-frenzy-open-source-/refs/heads/main/baldi.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Finalelele/Blair-script/refs/heads/code/blair.lua?t="..tick()))()
+
